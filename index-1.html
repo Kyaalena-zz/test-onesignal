@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <!--
+    Modified from the Debian original for Ubuntu
+    Last updated: 2016-11-16
+    See: https://launchpad.net/bugs/1288690
+  -->
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Apache2 Ubuntu Default Page: It works</title>
+
+
+
+<link rel="manifest" href="/manifest.json" />
+<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+<script>
+
+    var utils = {
+        userIsLogged: function(){
+            return true
+        },
+        getUserDatas: function(){
+            return {
+                duid: "5b8fda3e51d741.03010389", 
+                userId: "38", 
+                userClass: "REGISTERED", 
+                profileId: "0", 
+                segmentId: "0"
+            }
+        }
+    }
+
+    //var isUserLogged = ( ( typeof utils != 'undefined') && ( typeof utils.getUserDatas != 'undefined') &&( typeof utils.getUserDatas.userId != 'undefined') );
+    var isUserLogged = utils.userIsLogged()
+
+    var OneSignal = window.OneSignal || [];
+  
+
+    OneSignal.push(function() {
+
+        OneSignal.init({
+          appId: "d634b3e7-6b77-48c7-bab6-0195624581b7",
+          autoRegister: true,      
+        });
+ 
+        OneSignal.on('subscriptionChange', function(isSubscribed) {
+
+            if (isSubscribed) {
+                // The user is subscribed, Either the user subscribed for the first time 
+                //   Or the user was subscribed -> unsubscribed -> subscribed
+                //TODO: ENVIAR TAG REGISTRO URL
+                OneSignal.sendTags( 
+                    ( isUserLogged ) ? {
+                        'registerUrl': window.location.href,
+                        'userId': utils.getUserDatas().userId,
+                        'userClass': utils.getUserDatas().userClass,
+                    } : { 'registerUrl': window.location.href } ).then(function(tagsSent) {
+                    // Callback called when tags have finished sending
+                    console.log('TAGS REGISTRO')    
+                    console.log(tagsSent)
+                  });
+            }
+        });
+
+        OneSignal.isPushNotificationsEnabled().then(function(isEnabled) {
+            if ( (isEnabled) && (isUserLogged) )
+                OneSignal.sendTags({
+                    'userId': utils.getUserDatas().userId,
+                    'userClass': utils.getUserDatas().userClass,
+                }).then(function(tagsSent) {
+                    // Callback called when tags have finished sending    
+                    console.log(tagsSent)
+                });
+            else
+              console.log("Push notifications are not enabled yet.");      
+          });
+ 
+    });
+    //Deleting previous tags defined in the test to get the opt-in-url
+    //OneSignal.deleteTags(["key", "url"]);
+</script>
+
+
+</head>
+  <body>
+        
+      <button id="logged" onclick="login">Login</button>
+      <button id="cli" onclick="compra">Compra</button>
+      
+
+  </body>
+</html>
