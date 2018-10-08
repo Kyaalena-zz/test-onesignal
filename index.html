@@ -14,86 +14,118 @@
 <link rel="manifest" href="/manifest.json" />
 <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
 <script>
-  var login = false; 
+  var login = false;
+  var id_mylex = 0;
+  var cliente = false;
+  var compra = false;  
   var OneSignal = window.OneSignal || [];
-  OneSignal.push(function() {
-    OneSignal.init({
-      appId: "d634b3e7-6b77-48c7-bab6-0195624581b7",
-      autoRegister: true,      
-    });
 
-    OneSignal.sendTag("tipo-usuario", "Anonimo", function(tagsSent) {
-      // Callback called when tags have finished sending
-      console.log("finished tagsSent");
-      console.log(tagsSent);  // (Output) tags sent
-    });
+  
 
-    OneSignal.sendTag("tipo-usuario", "Registrado", function(tagsSent) {
-      // Callback called when tags have finished sending
-      console.log("finished tagsSent");
-      console.log(tagsSent);  // (Output) tags sent
-    });
+      OneSignal.push(function() {
+        OneSignal.init({
+          appId: "d634b3e7-6b77-48c7-bab6-0195624581b7",
+          autoRegister: true,      
+        });
 
-    OneSignal.on('subscriptionChange', function(isSubscribed) {
-      if (isSubscribed) {
-        // The user is subscribed, Either the user subscribed for the first time 
-        //   Or the user was subscribed -> unsubscribed -> subscribed
         OneSignal.getUserId(function(userId) {
           // Make a POST call to your server with the user ID
           console.log("OneSignal User ID:", userId);
           // (Output) OneSignal User ID: 270a35cd-4dda-4b3f-b04e-41d7463a2316             
         });
 
-        OneSignal.sendTag("opt-in-url", window.location.href, function(tagsSent) {
-          // Callback called when tags have finished sending
-          console.log("finished tagsSent");
-          console.log(tagsSent);  // (Output) tags sent
-          });
-
-        //To know if the user has active subscription permissions
-        OneSignal.push(["getNotificationPermission", function(permission) {
-          console.log("Site Notification Permission:", permission);
-          // (Output) Site Notification Permission: default
-        }]);
-
-        //To know if the user has active notifications
-        OneSignal.isPushNotificationsEnabled(function(isEnabled) {
-          if (isEnabled)
-            console.log("Push notifications are enabled!");
-          else
-            console.log("Push notifications are not enabled yet.");    
-        }); 
-
         //know type of user that can be registered, customer or anonymous.
-      }
-    });
+        OneSignal.sendTag("tipo-usuario", "Anonimo", function(tagsSent) {
+          // Callback called when tags have finished sending
+            console.log("Tags Sent init pag");
+            console.log(tagsSent);  // (Output) tags sent
+          });
+ 
+        OneSignal.on('subscriptionChange', function(isSubscribed) {
+          if (isSubscribed) {
+            // The user is subscribed, Either the user subscribed for the first time 
+            //   Or the user was subscribed -> unsubscribed -> subscribed
+          
+          OneSignal.sendTag("opt-in-url", window.location.href, function(tagsSent) {
+            // Callback called when tags have finished sending
+            console.log("Tags user suscribed");
+            console.log(tagsSent);  // (Output) tags sent
+            });
+
+          //To know if the user has active subscription permissions
+          OneSignal.push(["getNotificationPermission", function(permission) {
+            console.log("Site Notification Permission:", permission);
+            // (Output) Site Notification Permission: default
+          }]);
+
+          //To know if the user has active notifications
+          OneSignal.isPushNotificationsEnabled(function(isEnabled) {
+            if (isEnabled)
+              console.log("Push notifications are enabled!");
+            else
+              console.log("Push notifications are not enabled yet.");    
+          }); 
+        }});
+
+
+        window.onclick = function(login) {   
+              document.getElementById("logged").onclick = function() {
+                logged.style.backgroundColor = "blue";
+      
+      
+              function user_mylex(id_mylex){
+                id_mylex = 00001;
+                console.log("MyLex User ID:", id_mylex);
+              }
+      
+              OneSignal.sendTag("id-mylex", user_mylex, function(tagsSent) {
+                // Callback called when tags have finished sending
+                console.log("Tags Sent Logged");
+                console.log(tagsSent);  // (Output) tags sent
+              });
+
+              if (login) {
+
+                OneSignal.sendTag("tipo-usuario", "Registrado", function(tagsSent) {
+                  // Callback called when tags have finished sending
+                  //console.log("finished tagsSent");
+                  console.log(tagsSent);  // (Output) tags sent
+                });
+
+                OneSignal.sendTag("Cliente", "False", function(tagsSent) {
+                  console.log(tagsSent);  
+                });
+
+                window.onclick = function(compra) {   
+                  document.getElementById("cli").onclick = function() {
+                    cli.style.backgroundColor = "blue";
+
+                    if (login) {
+                      OneSignal.sendTag("Cliente", "True", function(tagsSent) {
+                        console.log(tagsSent);  
+                      });
+                    }
+                  }
+                }
+              }  
+          }   
+        
+      }});
+
+    
+          
 
     //Deleting previous tags defined in the test to get the opt-in-url
     //OneSignal.deleteTags(["key", "url"]);
-
-
-
-  }); 
-
-  
 </script>
 
-<script>
-    window.onclick = function(login) {   
-      document.getElementById("logged").onclick = function() {
-        logged.style.backgroundColor = "blue";
-      }
-      if (login)
-        console.log("usuario registrado");
-      else
-        console.log("usuario usuario anonimo");
-    }
-  </script>
 
 </head>
   <body>
         
-      <button id="logged">Login</button>
+      <button id="logged" onclick="login">Login</button>
+      <button id="cli" onclick="compra">Compra</button>
+      
 
   </body>
 </html>
